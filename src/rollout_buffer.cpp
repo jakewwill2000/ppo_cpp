@@ -1,3 +1,5 @@
+#include <assert.h>
+
 #include "../include/rollout_buffer.hpp"
 
 /**
@@ -84,8 +86,61 @@ void RolloutBuffer::add(
     count += 1;
 }
 
+/**
+ * Obtain the samples in this buffer as a RolloutBufferSamples object.
+ * Samples will be randomly permuted.
+ */
 RolloutBufferSamples RolloutBuffer::permute_and_get_samples() {
-    
+    // This function should only be called when the buffer is full
+    assert(count == buffer_size);
+
+    torch::Tensor perm_indices = torch::randperm(buffer_size * num_envs);
+
+    for (auto &it: observation_shapes) {
+        observations[it.first] = 
+            swap_and_flatten(observations[it.first]).index({perm_indices});
+    }
+
+    actions = swap_and_flatten(actions).index({perm_indices});
+    returns = swap_and_flatten(returns).index({perm_indices});
+    values = swap_and_flatten(values).index({perm_indices});
+    log_probs = swap_and_flatten(log_probs).index({perm_indices});
+    advantages = swap_and_flatten(advantages).index({perm_indices});
+
+    RolloutBufferSamples samples = RolloutBufferSamples {
+        observations,
+        actions,
+        returns,
+        values,
+        log_probs,
+        advantages
+    };
+
+    return samples;
+}
+
+/**
+ * Given a tensor with dimension (buffer_size, num_envs, ...), swaps the first
+ * two axes and reshapes it into (buffer_size * num_envs, ...) then returns the
+ * result. This maintains the original ordering.Does not modify the original 
+ * tensor.
+ */
+torch::Tensor RolloutBuffer::swap_and_flatten(torch::Tensor tensor) {
+    assert(tensor.dim() >= 3);
+
+    std::vector<long int> swap_perm = {1, 0};
+
+    for (int i = 2; i < tensor.dim(); i++) {
+        swap_perm.push_back(i);
+    }
+
+    std::vector<long int> new_dim = {buffer_size * num_envs};
+    for (int i = 2; i < tensor.dim(); i++) {
+        new_dim.push_back(action_shape[tensor.sizes()[i]]);
+    }
+
+    return tensor.permute(torch::makeArrayRef(swap_perm)).reshape(
+                torch::makeArrayRef(new_dim));
 }
 
 void RolloutBuffer::compute_returns_and_advantages(
