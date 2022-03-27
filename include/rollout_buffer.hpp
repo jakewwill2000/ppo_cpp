@@ -26,8 +26,8 @@ public:
      */
     RolloutBuffer(
         int _buffer_size,
-        unordered_map<std::string, torch::Tensor> _observation_space,
-        torch::Tensor _action_space,
+        unordered_map<std::string, std::vector<long int>> _observation_space,
+        std::vector<long int> _action_space,
         float _gae_lambda,
         float _gamma,
         int _num_envs
@@ -73,10 +73,10 @@ private:
 
     // Observation space for the environment being sampled. Stored
     // as a hashmap to accomodate multiple components.
-    unordered_map<std::string, torch::Tensor> observation_space;
+    unordered_map<std::string, std::vector<long int>> observation_space;
 
     // Action space of the environment being sampled.
-    torch::Tensor action_space;
+    std::vector<long int> action_space;
 
     // Lambda value for generalized advantage estimation
     float gae_lambda;
