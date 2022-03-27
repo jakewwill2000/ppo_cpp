@@ -7,7 +7,7 @@
  */
 class RolloutBufferSamples {
 public:
-    torch::Tensor observations;
+    unordered_map<std::string, tensor::Tensor> observations;
     torch::Tensor actions;
     torch::Tensor old_values;
     torch::Tensor old_log_prob;
@@ -104,4 +104,6 @@ private:
     torch::Tensor values;
     torch::Tensor log_probs;
     torch::Tensor advantages;
+
+    torch::Tensor swap_and_flatten(torch::Tensor tensor);
 }
