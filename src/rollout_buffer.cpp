@@ -71,7 +71,17 @@ void RolloutBuffer::add(
     torch::Tensor _values,
     torch::Tensor _log_probs
 ) {
+    for (auto &it: _observations) {
+        observations[it.first][count] = it.second.clone();
+    }
 
+    actions[count]        = _actions.clone();
+    rewards[count]        = _rewards.clone();
+    episode_starts[count] = _episode_starts.clone();
+    values[count]         = _values.clone();
+    log_probs[count]      = _log_probs.clone();
+
+    count += 1;
 }
 
 RolloutBufferSamples RolloutBuffer::permute_and_get_samples() {
