@@ -26,8 +26,8 @@ public:
      */
     RolloutBuffer(
         int _buffer_size,
-        unordered_map<std::string, std::vector<long int>> _observation_space,
-        std::vector<long int> _action_space,
+        unordered_map<std::string, std::vector<long int>> _observation_shapes,
+        std::vector<long int> _action_shape,
         float _gae_lambda,
         float _gamma,
         int _num_envs
@@ -73,10 +73,10 @@ private:
 
     // Observation space for the environment being sampled. Stored
     // as a hashmap to accomodate multiple components.
-    unordered_map<std::string, std::vector<long int>> observation_space;
+    unordered_map<std::string, std::vector<long int>> observation_shapes;
 
     // Action space of the environment being sampled.
-    std::vector<long int> action_space;
+    std::vector<long int> action_shape;
 
     // Lambda value for generalized advantage estimation
     float gae_lambda;
