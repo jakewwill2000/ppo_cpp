@@ -64,14 +64,14 @@ void RolloutBuffer::reset() {
 }
 
 void RolloutBuffer::add(
-    torch::Tensor observations,
+    unordered_map<std::string, torch::Tensor> observations,
     torch::Tensor actions,
     torch::Tensor rewards,
     torch::Tensor episode_starts,
     torch::Tensor values,
     torch::Tensor log_probs
 ) {
-
+    
 }
 
 RolloutBufferSamples RolloutBuffer::permute_and_get_samples() {

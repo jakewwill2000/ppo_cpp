@@ -45,7 +45,7 @@ public:
      * number of parallel environments (num_envs).
      */
     void add(
-        torch::Tensor observations,
+        unordered_map<std::string, torch::Tensor> observations,
         torch::Tensor actions,
         torch::Tensor rewards,
         torch::Tensor episode_starts,
