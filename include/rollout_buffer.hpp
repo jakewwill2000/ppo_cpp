@@ -64,7 +64,7 @@ public:
      * estimation. This should only be called when the buffer is full.
      */
     void compute_returns_and_advantages(
-        torch::Tensor last_values, 
+        torch::Tensor _last_values, 
         torch::Tensor dones
     );
 private:

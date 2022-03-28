@@ -143,9 +143,34 @@ torch::Tensor RolloutBuffer::swap_and_flatten(torch::Tensor tensor) {
                 torch::makeArrayRef(new_dim));
 }
 
+/**
+ * Compute the lambda-return and GAE advantage. Follows the stable_baselines3
+ * implementation almost exactly.
+ */
 void RolloutBuffer::compute_returns_and_advantages(
-    torch::Tensor last_values, 
+    torch::Tensor _last_values, 
     torch::Tensor dones
 ) {
+    torch::Tensor last_values = _last_values.clone();
+    torch::Tensor last_gae_lambda = torch::zeros({num_envs});
 
+    for (int i = buffer_size - 1; i >= 0; i--) {
+        torch::Tensor next_non_terminals = torch::ones({num_envs});
+        torch::Tensor next_values = last_values;
+
+        if (i == buffer_size - 1) {
+            next_non_terminals -= dones;
+        } else {
+            next_non_terminals -= episode_starts[i + 1];
+            next_values = values[i + 1];
+        }
+
+        torch::Tensor delta = rewards[i] + gamma * next_values *
+                                next_non_terminals - values[i];
+
+        last_gae_lambda = delta + gamma * gae_lambda * next_non_terminals *
+                            last_gae_lambda;
+    }
+
+    returns = advantages + values;
 }
