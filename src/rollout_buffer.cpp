@@ -9,7 +9,7 @@
  */
 RolloutBuffer::RolloutBuffer(
     int _buffer_size,
-    unordered_map<std::string, std::vector<long int>> _observation_shape,
+    std::unordered_map<std::string, std::vector<long int>> _observation_shape,
     std::vector<long int> _action_shape,
     float _gae_lambda,
     float _gamma,
@@ -66,7 +66,7 @@ void RolloutBuffer::reset() {
 }
 
 void RolloutBuffer::add(
-    unordered_map<std::string, torch::Tensor> _observations,
+    std::unordered_map<std::string, torch::Tensor> _observations,
     torch::Tensor _actions,
     torch::Tensor _rewards,
     torch::Tensor _episode_starts,

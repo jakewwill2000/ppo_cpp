@@ -7,7 +7,7 @@
  */
 class RolloutBufferSamples {
 public:
-    unordered_map<std::string, tensor::Tensor> observations;
+    std::unordered_map<std::string, torch::Tensor> observations;
     torch::Tensor actions;
     torch::Tensor old_values;
     torch::Tensor old_log_prob;
@@ -26,7 +26,7 @@ public:
      */
     RolloutBuffer(
         int _buffer_size,
-        unordered_map<std::string, std::vector<long int>> _observation_shapes,
+        std::unordered_map<std::string, std::vector<long int>> _observation_shapes,
         std::vector<long int> _action_shape,
         float _gae_lambda,
         float _gamma,
@@ -45,7 +45,7 @@ public:
      * number of parallel environments (num_envs).
      */
     void add(
-        unordered_map<std::string, torch::Tensor> _observations,
+        std::unordered_map<std::string, torch::Tensor> _observations,
         torch::Tensor _actions,
         torch::Tensor _rewards,
         torch::Tensor _episode_starts,
@@ -73,7 +73,7 @@ private:
 
     // Observation space for the environment being sampled. Stored
     // as a hashmap to accomodate multiple components.
-    unordered_map<std::string, std::vector<long int>> observation_shapes;
+    std::unordered_map<std::string, std::vector<long int>> observation_shapes;
 
     // Action space of the environment being sampled.
     std::vector<long int> action_shape;
@@ -96,7 +96,7 @@ private:
      * along with the normal observation), they are stored within a
      * hashmap where each key corresponds to the appropriate component.
      */
-    unordered_map<std::string, torch::Tensor> observations;
+    std::unordered_map<std::string, torch::Tensor> observations;
     torch::Tensor actions;
     torch::Tensor rewards;
     torch::Tensor returns;
@@ -106,4 +106,4 @@ private:
     torch::Tensor advantages;
 
     torch::Tensor swap_and_flatten(torch::Tensor tensor);
-}
+};
