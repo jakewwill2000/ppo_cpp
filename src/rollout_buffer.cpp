@@ -126,8 +126,6 @@ RolloutBufferSamples RolloutBuffer::permute_and_get_samples() {
  * tensor.
  */
 torch::Tensor RolloutBuffer::swap_and_flatten(torch::Tensor tensor) {
-    assert(tensor.dim() >= 3);
-
     std::vector<long int> swap_perm = {1, 0};
 
     for (int i = 2; i < tensor.dim(); i++) {
@@ -136,7 +134,11 @@ torch::Tensor RolloutBuffer::swap_and_flatten(torch::Tensor tensor) {
 
     std::vector<long int> new_dim = {buffer_size * num_envs};
     for (int i = 2; i < tensor.dim(); i++) {
-        new_dim.push_back(action_shape[tensor.sizes()[i]]);
+        new_dim.push_back(tensor.sizes()[i]);
+    }
+
+    if (new_dim.size() < 2) {
+        new_dim.push_back(1);
     }
 
     return tensor.permute(torch::makeArrayRef(swap_perm)).reshape(
